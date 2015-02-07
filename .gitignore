@@ -5,3 +5,6 @@ UnityVS.No shit Sherlock.CSharp.csproj
 UnityVS.No shit Sherlock.sln
 UnityVS.No shit Sherlock.sln.ide/
 obj/
+Temp/
+*.sln
+*.csproj
