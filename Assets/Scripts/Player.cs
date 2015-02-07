@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private int _lives = 3;
-    [SerializeField] private int _maxlives = 3;
+    [SerializeField] public int _lives = 3;
+    [SerializeField] public int _maxlives = 3;
     [SerializeField] private float _playerSpeed = 8;
     [SerializeField] private float _turboSpeed = 11;
     [SerializeField] private float _rotationSpeed = 150;
@@ -13,6 +15,7 @@ public class Player : MonoBehaviour
     private float _currentTurboSpeedTime = 0;
     private bool _runTurboClock = false;
     private Vector3 _direction = Vector3.forward;
+    public Action onHitWall;
     [SerializeField]
     private List<AudioClip> _shortFartSounds = new List<AudioClip>();
     // Use this for initialization
@@ -110,6 +113,12 @@ public class Player : MonoBehaviour
 
             _runTurboClock = true;
             _lives--;
+
+            if(onHitWall!=null)
+            {
+                onHitWall();
+            }
+            //onHitWall?.Invoke();
 
             if (_lives == 0)
             {
