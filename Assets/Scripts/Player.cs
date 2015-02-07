@@ -65,6 +65,38 @@ public class Player : MonoBehaviour
         transform.Translate(_direction * Time.deltaTime * playerSpeed);
     }
 
+//    [MenuItem("GameObject/Create Other/Box collider")]
+//    static void AddBoxCollider()
+//    {
+//        var selectedTransforms = Selection.transforms;
+//        if (selectedTransforms!=null)
+//        {
+//            foreach (var selectedTransform in selectedTransforms)
+//            {
+//                CreateBoxCollider(selectedTransform.gameObject);
+//            }
+//        }
+//        
+//    }
+
+    private static void CreateBoxCollider(GameObject gameObject)
+    {
+        gameObject.AddComponent<BoxCollider>();
+        BoxCollider collider = (BoxCollider)gameObject.collider;
+        Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
+        MeshFilter[] filters = gameObject.GetComponentsInChildren<MeshFilter>();
+
+        foreach (MeshFilter f in filters)
+        {
+            bounds.Encapsulate(f.sharedMesh.bounds);
+            bounds.center = Vector3.zero;
+
+        }
+
+        collider.size = bounds.size;
+        collider.center = bounds.center;
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Wall")
@@ -79,7 +111,7 @@ public class Player : MonoBehaviour
             _runTurboClock = true;
             _lives--;
 
-            if (_lives==0)
+            if (_lives == 0)
             {
                 _lives = _maxlives;
                 GameController.LevelLost();

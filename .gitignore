@@ -8,3 +8,5 @@ obj/
 Temp/
 *.sln
 *.csproj
+UnityVS.NoShitSherlock.sln.ide/
+*.suo

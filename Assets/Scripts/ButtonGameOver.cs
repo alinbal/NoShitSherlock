@@ -17,4 +17,9 @@ public class ButtonGameOver : MonoBehaviour {
     {
         GameController.RestartLevel();
     }
+
+    public void GameStart()
+    {
+        GameController.LevelWin();
+    }
 }
