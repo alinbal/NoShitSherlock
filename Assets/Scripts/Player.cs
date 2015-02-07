@@ -3,11 +3,12 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private static int _lives = 3;
-    private static float _playerSpeed = 8;
-    private static float _turboSpeed = 11;
-    private static float _rotationSpeed = 150;
-    private static float _turboRotationSpeed = 180;
+    [SerializeField] private int _lives = 3;
+    [SerializeField] private int _maxlives = 3;
+    [SerializeField] private float _playerSpeed = 8;
+    [SerializeField] private float _turboSpeed = 11;
+    [SerializeField] private float _rotationSpeed = 150;
+    [SerializeField] private float _turboRotationSpeed = 180;
     [SerializeField] private Animator _lightAnimator;
     private float _currentTurboSpeedTime = 0;
     private bool _runTurboClock = false;
@@ -17,7 +18,7 @@ public class Player : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        _lives = _maxlives;
     }
 
     // Update is called once per frame
@@ -80,8 +81,8 @@ public class Player : MonoBehaviour
 
             if (_lives==0)
             {
-                _lives = 3;
-
+                _lives = _maxlives;
+                GameController.LevelLost();
             }
 
         }
