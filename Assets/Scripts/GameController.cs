@@ -18,6 +18,25 @@ public class GameController : MonoBehaviour
     void Start()
     {
         DontDestroyOnLoad(gameObject);
+        _player = FindObjectOfType<Player>();
+        if (_player != null)
+        {
+            _playerFace = 1;
+            _player.shitFountain = shitFountain;
+            _uiSpriteFace.spriteName = "face" + _playerFace;
+            _shitBar.SetActive(true);
+            _uiSprite.fillAmount = 1 - (((_player._lives * 100f) / _player._maxlives) / 100);
+            _player.onHitWall += () =>
+            {
+                _playerFace++;
+                _uiSprite.fillAmount = 1 - (((_player._lives * 100f) / _player._maxlives) / 100);
+                _uiSpriteFace.spriteName = "face" + _playerFace;
+            };
+        }
+        else
+        {
+            _shitBar.SetActive(false);
+        }
     }
 
     private void CleanScene(GameObject target)

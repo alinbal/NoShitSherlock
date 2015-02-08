@@ -9,7 +9,10 @@ public class ButtonGameOver : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        label.text = "You solved " + Mathf.Clamp(GameController.casesSolved-1,0,int.MaxValue) + " cases";
+        if (label!=null)
+        {
+            label.text = "You solved " + Mathf.Clamp(GameController.casesSolved - 1, 0, int.MaxValue) + " cases";
+        }
     }
 
     // Update is called once per frame
