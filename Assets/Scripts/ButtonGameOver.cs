@@ -1,17 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ButtonGameOver : MonoBehaviour {
+public class ButtonGameOver : MonoBehaviour
+{
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    [SerializeField]
+    private UILabel label;
+    // Use this for initialization
+    void Start()
+    {
+        label.text = "You solved " + Mathf.Clamp(GameController.casesSolved-1,0,int.MaxValue) + " cases";
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 
     public void GameOver()
     {
