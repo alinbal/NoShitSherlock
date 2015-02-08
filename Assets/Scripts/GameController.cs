@@ -101,6 +101,8 @@ public class GameController : MonoBehaviour
             _uiSpriteFace.spriteName = "face" + _playerFace;
             _shitBar.SetActive(true);
             _uiSprite.fillAmount = 1 - (((_player._lives * 100f) / _player._maxlives) / 100);
+            _uiSpriteFace.spriteName = "face" + _playerFace;
+            //_uiSpriteFace.spriteName = "face" + ((_player._lives * 100f) / _player._maxlives)/3;
             _player.onHitWall += () =>
             {
                 if (_playerFace < 3)
@@ -109,7 +111,9 @@ public class GameController : MonoBehaviour
                 }
 
                 _uiSprite.fillAmount = 1 - (((_player._lives * 100f) / _player._maxlives) / 100);
-                _uiSpriteFace.spriteName = "face" + _playerFace;
+                Debug.Log(4-(int)(((_player._lives * 100f) / _player._maxlives) / 30));
+                _uiSpriteFace.spriteName = "face" + (4 - (int)(((_player._lives * 100f) / _player._maxlives) / 30));
+                //_uiSpriteFace.spriteName = "face" + _playerFace;
             };
         }
         else
