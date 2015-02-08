@@ -16,8 +16,8 @@ public class Player : MonoBehaviour
     private bool _runTurboClock = false;
     private Vector3 _direction = Vector3.forward;
     public Action onHitWall;
-    [SerializeField]
-    private List<AudioClip> _shortFartSounds = new List<AudioClip>();
+    [SerializeField] private List<AudioClip> _shortFartSounds = new List<AudioClip>();
+    [SerializeField] private List<AudioClip> _secretSounds = new List<AudioClip>();
     // Use this for initialization
     void Start()
     {
@@ -109,7 +109,10 @@ public class Player : MonoBehaviour
 
             iTween.RotateTo(gameObject, playerRotation, 0.3f);
             _lightAnimator.SetTrigger("triggerFlash");
+
             NGUITools.PlaySound(_shortFartSounds[Random.Range(0, _shortFartSounds.Count - 1)]);
+            Invoke("PlayDelaySound", 0.3f);
+            
 
             _runTurboClock = true;
             _lives--;
@@ -131,6 +134,11 @@ public class Player : MonoBehaviour
         {
             GameController.LevelWin();
         }
+    }
+
+    public void PlayDelaySound()
+    {
+        NGUITools.PlaySound(_secretSounds[Random.Range(0, _secretSounds.Count - 1)]);
     }
 }
 
