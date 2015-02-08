@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
@@ -8,21 +9,48 @@ public class GameController : MonoBehaviour
     [SerializeField] private UISprite _uiSprite;
     [SerializeField] private UISprite _uiSpriteFace;
     [SerializeField] private GameObject _shitBar;
+    [SerializeField] public GameObject shitFountain;
     public static int casesSolved = 0;
     private int _playerFace = 1;
     private Player _player;
+    private static GameObject gameControllerInstance;
     // Use this for initialization
     void Start()
     {
         DontDestroyOnLoad(gameObject);
     }
 
+    private void CleanScene(GameObject target)
+    {
+        if (target!=null)
+        {
+            var gameControllers = FindObjectsOfType<GameController>();
+            Debug.Log("clean" + gameControllers.Count());
+            foreach (var gameController in gameControllers)
+            {
+                if (!gameController.gameObject.Equals(target))
+                {
+                    Destroy(gameController.gameObject);
+                }
+            }
+        }
+        
+    }
+
     void OnLevelWasLoaded(int level)
     {
+        if (gameControllerInstance==null)
+        {
+            gameControllerInstance = gameObject;
+        }
+
+        CleanScene(gameControllerInstance);
+        
         _player = FindObjectOfType<Player>();
         if (_player != null)
         {
             _playerFace = 1;
+            _player.shitFountain = shitFountain;
             _uiSpriteFace.spriteName = "face" + _playerFace;
             _shitBar.SetActive(true);
             _uiSprite.fillAmount = 1 - (((_player._lives * 100f) / _player._maxlives) / 100);

@@ -1,23 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] public int _lives = 3;
-    [SerializeField] public int _maxlives = 3;
-    [SerializeField] private float _playerSpeed = 8;
-    [SerializeField] private float _turboSpeed = 11;
-    [SerializeField] private float _rotationSpeed = 150;
-    [SerializeField] private float _turboRotationSpeed = 180;
-    [SerializeField] private Animator _lightAnimator;
+    [SerializeField]
+    public int _lives = 3;
+    [SerializeField]
+    public int _maxlives = 3;
+    [SerializeField]
+    private float _playerSpeed = 8;
+    [SerializeField]
+    private float _turboSpeed = 11;
+    [SerializeField]
+    private float _rotationSpeed = 150;
+    [SerializeField]
+    private float _turboRotationSpeed = 180;
+    [SerializeField]
+    private Animator _lightAnimator;
+    public GameObject shitFountain;
     private float _currentTurboSpeedTime = 0;
     private bool _runTurboClock = false;
     private Vector3 _direction = Vector3.forward;
     public Action onHitWall;
-    [SerializeField] private List<AudioClip> _shortFartSounds = new List<AudioClip>();
-    [SerializeField] private List<AudioClip> _secretSounds = new List<AudioClip>();
+    [SerializeField]
+    private List<AudioClip> _shortFartSounds = new List<AudioClip>();
+    [SerializeField]
+    private List<AudioClip> _secretSounds = new List<AudioClip>();
+
+    private bool playerMove = true;
     // Use this for initialization
     void Start()
     {
@@ -27,60 +40,49 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var playerSpeed = 0f;
-        var rotationSpeed = 0f;
-
-        if (_runTurboClock)
+        if (playerMove)
         {
-            if (_currentTurboSpeedTime <= 1)
+            var playerSpeed = 0f;
+            var rotationSpeed = 0f;
+
+            if (_runTurboClock)
             {
-                _currentTurboSpeedTime += Time.deltaTime;
+                if (_currentTurboSpeedTime <= 1)
+                {
+                    _currentTurboSpeedTime += Time.deltaTime;
+                }
+                else
+                {
+                    _runTurboClock = false;
+                    _currentTurboSpeedTime = 0;
+                }
+            }
+
+            if (_runTurboClock)
+            {
+                playerSpeed = _turboSpeed;
+                rotationSpeed = _turboRotationSpeed;
             }
             else
             {
-                _runTurboClock = false;
-                _currentTurboSpeedTime = 0;
+                playerSpeed = _playerSpeed;
+                rotationSpeed = _rotationSpeed;
             }
-        }
-
-        if (_runTurboClock)
-        {
-            playerSpeed = _turboSpeed;
-            rotationSpeed = _turboRotationSpeed;
-        }
-        else
-        {
-            playerSpeed = _playerSpeed;
-            rotationSpeed = _rotationSpeed;
-        }
 
 
-        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetMouseButton(0))
-        {
-            transform.Rotate(-Vector3.up * rotationSpeed * Time.deltaTime);
-        }
+            if (Input.GetKey(KeyCode.LeftArrow) || Input.GetMouseButton(0))
+            {
+                transform.Rotate(-Vector3.up * rotationSpeed * Time.deltaTime);
+            }
 
-        if (Input.GetKey(KeyCode.RightArrow) || Input.GetMouseButton(1))
-        {
-            transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
-        }
+            if (Input.GetKey(KeyCode.RightArrow) || Input.GetMouseButton(1))
+            {
+                transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
+            }
 
-        transform.Translate(_direction * Time.deltaTime * playerSpeed);
+            transform.Translate(_direction * Time.deltaTime * playerSpeed);
+        }
     }
-
-//    [MenuItem("GameObject/Create Other/Box collider")]
-//    static void AddBoxCollider()
-//    {
-//        var selectedTransforms = Selection.transforms;
-//        if (selectedTransforms!=null)
-//        {
-//            foreach (var selectedTransform in selectedTransforms)
-//            {
-//                CreateBoxCollider(selectedTransform.gameObject);
-//            }
-//        }
-//        
-//    }
 
     private static void CreateBoxCollider(GameObject gameObject)
     {
@@ -112,12 +114,12 @@ public class Player : MonoBehaviour
 
             NGUITools.PlaySound(_shortFartSounds[Random.Range(0, _shortFartSounds.Count - 1)]);
             Invoke("PlayDelaySound", 0.3f);
-            
+
 
             _runTurboClock = true;
             _lives--;
 
-            if(onHitWall!=null)
+            if (onHitWall != null)
             {
                 onHitWall();
             }
@@ -126,7 +128,19 @@ public class Player : MonoBehaviour
             if (_lives == 0)
             {
                 _lives = _maxlives;
-                GameController.LevelLost();
+                if (playerMove)
+                {
+                    var shitFOuntain = Object.Instantiate(shitFountain) as GameObject;
+                    if (shitFOuntain != null)
+                    {
+                        var highPos = transform.position;
+                        highPos.y = 15;
+                        shitFOuntain.transform.position = highPos;
+                    }
+                    playerMove = false;
+                    Invoke("PlayGameLostDelay", 1);
+                }
+                //GameController.LevelLost();
             }
 
         }
@@ -139,6 +153,11 @@ public class Player : MonoBehaviour
     public void PlayDelaySound()
     {
         NGUITools.PlaySound(_secretSounds[Random.Range(0, _secretSounds.Count - 1)]);
+    }
+
+    public void PlayGameLostDelay()
+    {
+        GameController.LevelLost();
     }
 }
 
