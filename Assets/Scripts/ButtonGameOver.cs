@@ -11,7 +11,7 @@ public class ButtonGameOver : MonoBehaviour
     {
         if (label!=null)
         {
-            label.text = "You solved " + Mathf.Clamp(GameController.casesSolved - 1, 0, int.MaxValue) + " cases";
+            label.text = Mathf.Clamp(GameController.casesSolved - 1, 0, int.MaxValue).ToString();
         }
     }
 

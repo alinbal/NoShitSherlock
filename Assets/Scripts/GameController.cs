@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
@@ -10,6 +12,9 @@ public class GameController : MonoBehaviour
     [SerializeField] private UISprite _uiSpriteFace;
     [SerializeField] private GameObject _shitBar;
     [SerializeField] public GameObject shitFountain;
+    [SerializeField] List<string> startLevels = new List<string>(); 
+    [SerializeField] List<string> randomizeLevels = new List<string>();
+    private static List<string> levels = new List<string>(); 
     public static int casesSolved = 0;
     private int _playerFace = 1;
     private Player _player;
@@ -18,6 +23,15 @@ public class GameController : MonoBehaviour
     void Start()
     {
         DontDestroyOnLoad(gameObject);
+
+        if (levels.Count == 0)
+        {
+            levels.Clear();
+            levels.AddRange(startLevels);
+            randomizeLevels.Shuffle();
+            levels.AddRange(randomizeLevels);
+        }
+
         _player = FindObjectOfType<Player>();
         if (_player != null)
         {
@@ -44,7 +58,7 @@ public class GameController : MonoBehaviour
         if (target!=null)
         {
             var gameControllers = FindObjectsOfType<GameController>();
-            Debug.Log("clean" + gameControllers.Count());
+            //Debug.Log("clean" + gameControllers.Count());
             foreach (var gameController in gameControllers)
             {
                 if (!gameController.gameObject.Equals(target))
@@ -58,6 +72,14 @@ public class GameController : MonoBehaviour
 
     void OnLevelWasLoaded(int level)
     {
+        if (levels.Count == 0)
+        {
+            levels.Clear();
+            levels.AddRange(startLevels);
+            randomizeLevels.Shuffle();
+            levels.AddRange(randomizeLevels);
+        }
+
         if (gameControllerInstance==null)
         {
             gameControllerInstance = gameObject;
@@ -94,22 +116,24 @@ public class GameController : MonoBehaviour
 
     public static void LevelWin()
     {
-        LevelIndex++;
-
         if (Application.levelCount - 1 == LevelIndex)
         {
             LevelIndex = 0;
             LevelIndex++;
-            Application.LoadLevel(LevelIndex);
+            Application.LoadLevel(levels[LevelIndex]);
+            Debug.Log("Load level " + levels[LevelIndex]);
         }
         else
         {
-            Application.LoadLevel(LevelIndex);
+            Debug.Log("Load level " + levels[LevelIndex]);
+            Application.LoadLevel(levels[LevelIndex]);
         }
+
+        LevelIndex++;
 
         if (LevelIndex>=1)
         {
-            Debug.Log("Case solved" + casesSolved + "# lvlIndex:" + LevelIndex);
+            //Debug.Log("Case solved" + casesSolved + "# lvlIndex:" + LevelIndex);
             casesSolved++;
         }
         
@@ -119,12 +143,32 @@ public class GameController : MonoBehaviour
     {
         LevelIndex = 0;
         casesSolved = 0;
-        
+        levels.Clear();
         Application.LoadLevel("StartGame");
     }
 
     public static void LevelLost()
     {
         Application.LoadLevel("GameOver");
+    }
+}
+
+public static class ExtensionMethods
+{
+    public static void Shuffle<T>(this IList<T> list)
+    {
+        RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+        int n = list.Count;
+        while (n > 1)
+        {
+            byte[] box = new byte[1];
+            do provider.GetBytes(box);
+            while (!(box[0] < n * (Byte.MaxValue / n)));
+            int k = (box[0] % n);
+            n--;
+            T value = list[k];
+            list[k] = list[n];
+            list[n] = value;
+        }
     }
 }
