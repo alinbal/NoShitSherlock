@@ -8,13 +8,19 @@ public class GameController : MonoBehaviour
     public static int LevelIndex = 0;
     [SerializeField]
     private float _playerSpeed;
-    [SerializeField] private UISprite _uiSprite;
-    [SerializeField] private UISprite _uiSpriteFace;
-    [SerializeField] private GameObject _shitBar;
-    [SerializeField] public GameObject shitFountain;
-    [SerializeField] List<string> startLevels = new List<string>(); 
-    [SerializeField] List<string> randomizeLevels = new List<string>();
-    private static List<string> levels = new List<string>(); 
+    [SerializeField]
+    private UISprite _uiSprite;
+    [SerializeField]
+    private UISprite _uiSpriteFace;
+    [SerializeField]
+    private GameObject _shitBar;
+    [SerializeField]
+    public GameObject shitFountain;
+    [SerializeField]
+    List<string> startLevels = new List<string>();
+    [SerializeField]
+    List<string> randomizeLevels = new List<string>();
+    private static List<string> levels = new List<string>();
     public static int casesSolved = 0;
     private int _playerFace = 1;
     private Player _player;
@@ -55,7 +61,7 @@ public class GameController : MonoBehaviour
 
     private void CleanScene(GameObject target)
     {
-        if (target!=null)
+        if (target != null)
         {
             var gameControllers = FindObjectsOfType<GameController>();
             //Debug.Log("clean" + gameControllers.Count());
@@ -67,7 +73,7 @@ public class GameController : MonoBehaviour
                 }
             }
         }
-        
+
     }
 
     void OnLevelWasLoaded(int level)
@@ -80,13 +86,13 @@ public class GameController : MonoBehaviour
             levels.AddRange(randomizeLevels);
         }
 
-        if (gameControllerInstance==null)
+        if (gameControllerInstance == null)
         {
             gameControllerInstance = gameObject;
         }
 
         CleanScene(gameControllerInstance);
-        
+
         _player = FindObjectOfType<Player>();
         if (_player != null)
         {
@@ -97,7 +103,11 @@ public class GameController : MonoBehaviour
             _uiSprite.fillAmount = 1 - (((_player._lives * 100f) / _player._maxlives) / 100);
             _player.onHitWall += () =>
             {
-                _playerFace++;
+                if (_playerFace < 3)
+                {
+                    _playerFace++;
+                }
+
                 _uiSprite.fillAmount = 1 - (((_player._lives * 100f) / _player._maxlives) / 100);
                 _uiSpriteFace.spriteName = "face" + _playerFace;
             };
@@ -131,12 +141,12 @@ public class GameController : MonoBehaviour
 
         LevelIndex++;
 
-        if (LevelIndex>=1)
+        if (LevelIndex >= 1)
         {
             //Debug.Log("Case solved" + casesSolved + "# lvlIndex:" + LevelIndex);
             casesSolved++;
         }
-        
+
     }
 
     public static void RestartLevel()
